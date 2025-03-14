@@ -15,7 +15,7 @@ import { PaperAirplaneIcon } from "@heroicons/react/24/solid";
 
 export default function App() {
 
-    const [messages, setMessages] = useState([]); 
+  const [messages, setMessages] = useState([]); 
   const [inputValue, setInputValue] = useState(""); 
   const chatBoxRef = useRef(null); 
 
@@ -53,7 +53,7 @@ export default function App() {
           <div
             key={index}
             className={`p-2 max-w-xs text-white rounded-lg ${
-              msg.sender === "user" ? "bg-[#D771D9] ml-auto" : "bg-[#151320]"
+              msg.sender === "user" ? "bg-[#b30c7e] ml-auto" : "bg-[#151320]"
             }`}
           >
             {msg.text}
