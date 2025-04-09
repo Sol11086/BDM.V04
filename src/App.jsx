@@ -10,6 +10,7 @@ import TextoBienvenida from "./Components/TextoBienvenida.jsx";
 import Galeria from "./Components/Galeria.jsx";
 import MiPerfil from "./Components/MiPerfil.jsx";
 import Login from "./Components/Login.jsx";
+import EditUser from "./Components/EditUser.jsx";
 import Filter from "./Components/Filters.jsx"
 import {
   Navbar,
@@ -40,7 +41,7 @@ import {
 
 function App() {
 
-  const [isOpen, setIsOpen , isOpenSettings, setOpenSettings] = useState(false);
+  const [isOpen, setIsOpen, isOpenSettings, setOpenSettings] = useState(false);
   const { isOpen: isOpenLogin, onOpen: onOpenLogin, onOpenChange: onOpenChangeLogin } = useDisclosure();
   const [size, setSize] = useState("md");
   const [backdrop, setBackdrop] = useState("blur");
@@ -78,6 +79,13 @@ function App() {
     setBackdrop(backdrop);
     onOpenLogin();
   };
+
+
+  const { isOpen: isOpenUser,
+    onOpen: onOpenUser,
+    onOpenChange: onOpenChangeUser
+  } = useDisclosure();
+
 
   return (
     <>
@@ -163,7 +171,8 @@ function App() {
                   </DropdownItem>))}
                 <DropdownItem key="settings"
                   textValue="Settings"
-                  className="grid bg-gray-800 text-white mb-3 hover:bg-indigo-500 rounded-full justify-center">
+                  className="grid bg-gray-800 text-white mb-3 hover:bg-indigo-500 rounded-full justify-center"
+                  onClick={() => onOpenUser()}>
                   Ajustes
                 </DropdownItem>
                 <DropdownItem key="settings"
@@ -192,6 +201,29 @@ function App() {
                 )}
               </ModalContent>
             </Modal>
+
+            <Modal
+              isOpen={isOpenUser}
+              backdrop={backdrop}
+              onOpenChange={onOpenChangeUser}
+              className="bg-black text-white rounded-2xl"
+              overlay
+            >
+              <div className="fixed inset-0 backdrop-blur-xs z-50"></div>
+              <ModalContent className="relative z-60 w-4/6 max-w-[90%]">
+                {(onClose) => (
+                  <>
+                    <ModalHeader className="flex flex-col gap-1 bg-gradient-to-r from-[#1A168C] to-[#f609e2] text-2xl text-white">
+                      Informacion de usuario
+                      </ModalHeader>
+                    <ModalBody>
+                      <EditUser />
+                    </ModalBody>
+                  </>
+                )}
+              </ModalContent>
+            </Modal>
+
           </NavbarContent>
         </Navbar>
         {isMyperfil ? <MiPerfil /> : <Galeria />}
