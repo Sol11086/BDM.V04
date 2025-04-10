@@ -6,6 +6,12 @@ import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
 import { Bars3Icon } from "@heroicons/react/16/solid";
 import Chat from "./Chat.jsx";
 import ContactList from "./ContactList.jsx";
+import TextoBienvenida from "./TextoBienvenida.jsx";
+import Galeria from "./Galeria.jsx";
+import MiPerfil from "./MiPerfil.jsx";
+import Login from "./Login.jsx";
+import EditUser from "./EditUser.jsx";
+import Filter from "./Filters.jsx"
 import {
   Navbar,
   NavbarBrand,
@@ -23,60 +29,91 @@ import {
   DrawerContent,
   DrawerHeader,
   DrawerBody,
-  DrawerFooter
+  DrawerFooter,
+  useDisclosure,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Badge,
 } from "@heroui/react";
 
 export default function App() {
-
-  const [isOpen, setIsOpen] = useState(false);
+  
+  const [isOpen, setIsOpen, isOpenSettings, setOpenSettings] = useState(false);
+  const { isOpen: isOpenLogin, onOpen: onOpenLogin, onOpenChange: onOpenChangeLogin } = useDisclosure();
   const [size, setSize] = useState("md");
+  const [backdrop, setBackdrop] = useState("blur");
 
   const sizes = ["xs", "sm", "md", "lg", "xl", "2xl", "3xl", "4xl", "5xl", "full"];
 
   const handleOpen = (size) => {
     setSize(size);
-    setIsOpen(true); 
+    setIsOpen(true);
   };
 
   const handleClose = () => {
-    setIsOpen(false); 
+    setIsOpen(false);
   };
 
   const [isChat, setIsChat] = useState(false);
+  const [isMyperfil, setIsPerfil] = useState(false);
+  const [isHome, setIsHome] = useState(false);
 
   const toggleComponent = () => {
     setIsChat(!isChat);
   };
 
+  const toggleComponentMiPerfil = () => {
+    setIsPerfil(!isMyperfil);
+  };
+
+  const toggleHome = () => {
+    setIsHome(!isHome);
+  };
+
+  const backdrops = ["Cambiar de cuenta",];
+
+  const handleOpenLogin = (backdrop) => {
+    setBackdrop(backdrop);
+    onOpenLogin();
+  };
+
+
+  const { isOpen: isOpenUser,
+    onOpen: onOpenUser,
+    onOpenChange: onOpenChangeUser
+  } = useDisclosure();
+
   return (
+
+    <div className="min-h-screen bg-gradient-to-br from-[#04030D] from-[80%] via-[#0A062B] via-[90%] to-[#070540]">
     <Navbar className="top-0 left-0 w-full" style={{ backgroundColor: "rgba(26, 22, 140, 0.3)" }}>
       <NavbarBrand className="grid justify-start">
-        <p className="font-bold text-[#D771D9]">EmpresaX</p>
+        <p className="font-bold text-[#b30c7e]">EmpresaX</p>
       </NavbarBrand>
       <NavbarContent className="gap-15 justify-between">
         <NavbarItem>
-          <Link aria-current="page" href="#" className="hover:text-[#2EF2BB]">
+          <Link aria-current="page" className="hover:text-[#2EF2BB]" onClick={toggleHome}>
             <HomeIcon className="size-6 text-[#2EF2BB]" />
           </Link>
         </NavbarItem>
         <NavbarItem isActive>
-          <Link aria-current="page" href="#" className="hover:text-[#2EF2BB]">
+          <Link aria-current="page" className="hover:text-[#2EF2BB]" onClick={toggleComponentMiPerfil}>
             <UserIcon className="size-6 text-[#2EF2BB]" />
           </Link>
         </NavbarItem>
         <NavbarItem>
-          <Link
-            aria-current="page"
-            href="#"
-            className="hover:text-[#2EF2BB]"
-            onClick={() => handleOpen(size)} // Llama a handleOpen cuando se hace clic
-          >
-            <ChatBubbleBottomCenterIcon className="size-6 text-[#2EF2BB]" />
-          </Link>
+          <Badge color="danger" content="5" shape="circle" className="bg-rose-500 border-none">
+            <Link aria-current="page" className="hover:text-[#2EF2BB]" onClick={() => handleOpen(size)}>
+              <ChatBubbleBottomCenterIcon className="size-6 text-[#2EF2BB]" />
+            </Link>
+          </Badge>
           <Drawer isOpen={isOpen} size={size} onClose={handleClose} style={{ backgroundColor: "rgba(9, 7, 43)" }} >
             <DrawerContent>
               <DrawerHeader className="flex flex-col gap-1">
-                <Link aria-current="page" href="#" className="hover:text-[#2EF2BB]" onClick={toggleComponent}>
+                <Link aria-current="page" className="hover:text-[#2EF2BB]" onClick={toggleComponent}>
                   <Bars3Icon className="size-6 text-[#2EF2BB]" />
                 </Link>
               </DrawerHeader>
@@ -84,11 +121,8 @@ export default function App() {
                 {isChat ? <Chat /> : <ContactList />}
               </DrawerBody>
               <DrawerFooter>
-                <Button color="danger" variant="light" onClick={handleClose} className="bg-[#A40C37] rounded-full text-blue-50">
+                <Button color="danger" variant="light" onClick={handleClose} className="bg-rose-500 rounded-full text-blue-50">
                   Close
-                </Button>
-                <Button color="primary" onClick={handleClose} className="bg-indigo-500 rounded-full text-blue-50">
-                  Action
                 </Button>
               </DrawerFooter>
             </DrawerContent>
@@ -125,15 +159,73 @@ export default function App() {
               <p className="font-semibold text-blue-50">Signed in as</p>
               <p className="font-semibold  text-blue-50">zoey@example.com</p>
             </DropdownItem>
-            <DropdownItem key="settings" textValue="Settings" className=" grid bg-gray-800 text-white mb-3 hover:bg-indigo-500 rounded-full justify-center">
-              My Settings
+            {backdrops.map((b) => (
+              <DropdownItem
+                key="login"
+                textValue="login"
+                className="grid bg-gray-800 text-white mb-3 hover:bg-indigo-500 rounded-full justify-center"
+                onPress={() => onOpenLogin()}
+              >
+                {b}
+              </DropdownItem>))}
+            <DropdownItem key="settings"
+              textValue="Settings"
+              className="grid bg-gray-800 text-white mb-3 hover:bg-indigo-500 rounded-full justify-center"
+              onClick={() => onOpenUser()}>
+              Ajustes
             </DropdownItem>
-            <DropdownItem key="settings" textValue="Settings" className="grid justify-center bg-gray-800 text-white hover:bg-[#A40C37] rounded-full">
+            <DropdownItem key="settings"
+              textValue="Settings"
+              className="grid justify-center bg-gray-800 text-white hover:bg-rose-500 rounded-full">
               Log Out
             </DropdownItem>
           </DropdownMenu>
         </Dropdown>
+        <Modal
+          isOpen={isOpenLogin}
+          backdrop={backdrop}
+          onOpenChange={onOpenChangeLogin}
+          className="bg-black text-white rounded-2xl"
+          overlay
+        >
+          <div className="fixed inset-0 backdrop-blur-xs z-50"></div>
+          <ModalContent className="relative z-60">
+            {(onClose) => (
+              <>
+                <ModalHeader className="flex flex-col gap-1 bg-gradient-to-r from-[#1A168C] to-[#f609e2] text-2xl text-white">Log in</ModalHeader>
+                <ModalBody className="p-7">
+                  <Login />
+                </ModalBody>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
+
+        <Modal
+          isOpen={isOpenUser}
+          backdrop={backdrop}
+          onOpenChange={onOpenChangeUser}
+          className="bg-black text-white rounded-2xl"
+          overlay
+        >
+          <div className="fixed inset-0 backdrop-blur-xs z-50"></div>
+          <ModalContent className="relative z-60 w-4/6 max-w-[90%]">
+            {(onClose) => (
+              <>
+                <ModalHeader className="flex flex-col gap-1 bg-gradient-to-r from-[#1A168C] to-[#f609e2] text-2xl text-white">
+                  Informacion de usuario
+                  </ModalHeader>
+                <ModalBody>
+                  <EditUser />
+                </ModalBody>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
+
       </NavbarContent>
     </Navbar>
+    {isMyperfil ? <MiPerfil /> : <Galeria />}
+  </div>
   );
 }
