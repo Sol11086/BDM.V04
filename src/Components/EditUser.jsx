@@ -30,14 +30,35 @@ import {
     ModalFooter,
     Badge,
     DateInput,
+    Autocomplete,
 } from "@heroui/react";
 
 
+export const users = [
+    {
+        id: 1,
+        nombre: "Solecito_1108",
+        nombreCompleto: "Sofia de la Fuente Alarcon",
+        correo: "sofiadlfa@gmail.com",
+        imageSrc: "https://i.pravatar.cc/150?u=a042581f4e29026704d",
+    },
+    {
+        id: 2,
+        nombre: "Cons_1108",
+        nombreCompleto: "Constanza Montilongo",
+        correo: "consmtdl@gmail.com",
+        imageSrc: "src/assets/descarga (2).jpeg",
+    }
+];
+
 export default function App() {
     const [isVisible, setIsVisible] = React.useState(false);
-
     const toggleVisibility = () => setIsVisible(!isVisible);
 
+    const imageSrc = users[0].imageSrc; 
+    const nombre = users[0].nombre;
+    const nombreCompleto = users[0].nombreCompleto;
+    const correo = users[0].correo;
 
     const [file, setFile] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
@@ -66,58 +87,35 @@ export default function App() {
 
     return (
         <div className="w-full gap-5 py-5">
-            <Input
-                type="Text"
-                placeholder="Nombre de usuario"
-                className="w-full px-4 py-2 bg-[#151320] text-white border
-                 border-gray-700 rounded-xl focus:outline-none focus:ring-2
-                  focus:ring-blue-500 focus:border-blue-500 transition mb-5"
-            />
-            <Input
-                type="Text"
-                placeholder="Ingresa tu nombre completo"
-                className="w-full px-4 py-2 bg-[#151320] text-white border
-                 border-gray-700 rounded-xl focus:outline-none focus:ring-2
-                  focus:ring-blue-500 focus:border-blue-500 transition mb-5"
-            />
-            <Input
-                type="Email"
-                placeholder="Ingresa tu correo"
-                className="w-full px-4 py-2 bg-[#151320] text-white border
-                 border-gray-700 rounded-xl focus:outline-none focus:ring-2
-                  focus:ring-blue-500 focus:border-blue-500 transition mb-5"
-            />
-            <Input
-                className="w-full px-4 py-2 bg-[#151320] text-white border border-gray-700 
-                 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 
-                 focus:border-blue-500 transition"
-                endContent={
-                    <button
-                        aria-label="toggle password visibility"
-                        className="flex items-center justify-center p-2 bg-transparent"
-                        type="button"
-                        onClick={toggleVisibility}
-                    >
-                        {isVisible ? (
-                            <EyeSlashIcon className="w-6 h-6 text-gray-400" />
-                        ) : (
-                            <EyeIcon className="w-6 h-6 text-gray-400" />
-                        )}
-                    </button>
-                }
-                placeholder="Enter your password"
-                type={isVisible ? "text" : "password"}
-                variant="bordered"
-            />
+            <div className="flex gap-4">
+                {/* Utilizamos el componente estándar de imagen de HTML <img /> */}
+                <img src={imageSrc} alt="Preview" className="w-full h-auto rounded-2xl" />
+                <div className="w-full items-center justify-center gap-2 p-2">
+                    <Input
+                        className="w-full px-4 py-2 bg-[#151320] text-white border border-gray-700 rounded-xl mb-5"
+                        defaultValue={nombre}
+                        
+                    />
+                    <Input
+                        className="w-full px-4 py-2 bg-[#151320] text-white border border-gray-700 rounded-xl mb-5"
+                        defaultValue={nombreCompleto}
+                    />
+                    <Input
+                        type="email"
+                        className="w-full px-4 py-2 bg-[#151320] text-white border border-gray-700 rounded-xl mb-5"
+                        defaultValue={correo}
+                    />
+                </div>
+            </div>
             <div className="w-full mt-5 px-4 py-2 bg-[#151320] 
             text-white border border-gray-700 rounded-xl focus:outline-none focus:ring-2 
             focus:ring-blue-500 focus:border-blue-500 transition grid items-center justify-center gap-2 p-2">
-                <p className="text-gray-300 text-sm mb-2 flex justify-center">Foto de perfil</p>
+                <p className="text-gray-300 text-sm mb-2 flex justify-center">Cambiar foto de perfil</p>
 
                 <input
                     type="file"
                     id="file-upload"
-                    className="absolute opacity-0 cursor-pointer  bottom-35 right-10 z-10"
+                    className="absolute opacity-0 cursor-pointer bottom-30 right-120 z-10"
                     accept="image/*,video/*"
                     onChange={handleFileChange}
                 />
@@ -149,7 +147,7 @@ export default function App() {
 
                 {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
             </div>
-            <Button color="default" className="bg-indigo-500 w-full rounded-2xl mt-10">Registrarse</Button>
+            <Button color="default" className="bg-indigo-500 w-full rounded-2xl mt-10">Actualizar usuario </Button>
         </div>
     );
 }
