@@ -121,7 +121,7 @@ export default function App() {
     };
 
     return (
-        <div className="w-full gap-5 py-5">
+       <div className="w-full gap-5 py-5">
             <Input
                 type="Email"
                 placeholder="Ingresa tu correo"
@@ -224,7 +224,7 @@ export default function App() {
                 color="default"
                 className="bg-indigo-500 w-full rounded-2xl mt-10"
                 onPress={handleSubmit}
-                disabled={loading} // Disable the button when loading
+                disabled={loading} // Deshabilita el boton para que no haya varios registros
             >
                 {loading ? 'Registrando...' : 'Registrarse'}
             </Button>
