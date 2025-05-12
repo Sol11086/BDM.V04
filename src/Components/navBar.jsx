@@ -6,6 +6,7 @@ import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
 import { Bars3Icon } from "@heroicons/react/16/solid";
 import Chat from "./Chat.jsx";
 import ContactList from "./ContactList.jsx";
+import { useUserContext } from "../context/UserProvider";
 import {
   Navbar,
   NavbarBrand,
@@ -27,7 +28,7 @@ import {
 } from "@heroui/react";
 
 export default function App() {
-
+  const { selectedUser } = useUserContext();
   const [isOpen, setIsOpen] = useState(false);
   const [size, setSize] = useState("md");
 

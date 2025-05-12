@@ -15,12 +15,15 @@ import MyGallery from "./MyGallery.jsx";
 import Gallery from "./Galeria.jsx";
 import Followers from "./Folllowers.jsx";
 import NewMedia from "./NewMedia.jsx";
+import { useUserContext } from "../context/UserProvider";
 
 export default function App() {
     const [activeComponent, setActiveComponent] = useState("followers");
 
     const { isOpen: isOpenLogin, onOpen: onOpenLogin, onOpenChange: onOpenChangeLogin } = useDisclosure();
     const [backdrop, setBackdrop] = useState("blur");
+
+     const { selectedUser } = useUserContext();
 
     return (
         <div className="min-h-screen w-full items-center" style={{ backgroundColor: "rgba(26, 22, 140, 0.3)" }}>
@@ -30,8 +33,9 @@ export default function App() {
             >
                 <div className="flex flex-col sm:flex-row mb-20 mt-20 ml-5 items-center justify-between gap-5">
                     <div className="flex items-center gap-3">
-                        <Avatar size="lg" src="src/assets/descarga (6).jpeg" />
-                        <span className="text-white font-semibold text-2xl">Solecito_1108</span>
+                        <Avatar size="lg"
+                        src={`data:image/png;base64,${selectedUser?.foto_perfil}`} />
+                        <span className="text-white font-semibold text-2xl"> {selectedUser?.id_usuarios}</span>
                     </div>
                     <div className="flex flex-wrap sm:ml-96 justify-between gap-12 mt-5 sm:mt-0">
                         <Tooltip content="Seguidores" className="text-[#2EF2BB]">

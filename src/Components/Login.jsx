@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { EyeIcon } from "@heroicons/react/24/solid";
 import { EyeSlashIcon } from "@heroicons/react/24/solid";
 import Register from "./Register.jsx"
+import { useUserContext } from "../context/UserProvider";
 import { useUsers } from "../hooks/useUsers.jsx";
 import {
     Navbar,
@@ -39,7 +40,8 @@ export default function App() {
     const [backdrop, setBackdrop] = useState("blur");
     const [correo, setCorreo] = useState('');
     const [contra, setContra] = useState('');
-    const { verifyUser, getUser, loading } = useUsers(); 
+    const { setSelectedUser } = useUserContext ();
+    const { verifyUser, getUser, loading } = useUsers();
 
     const { isOpen: isOpenLogin, onOpen: onOpenLogin, onOpenChange: onOpenChangeLogin } = useDisclosure();
     const handleLogin = async () => {
@@ -48,6 +50,7 @@ export default function App() {
           if (isValid) {
             const userInfo = await getUser(correo);
             console.log("Info usuario:", userInfo);
+            setSelectedUser(userInfo);
           } else {
             console.log("Credenciales no validas");
           }
