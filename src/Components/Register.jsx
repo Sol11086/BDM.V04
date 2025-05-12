@@ -56,6 +56,13 @@ export default function App() {
         const selectedFile = event.target.files[0];
 
         if (selectedFile) {
+            const isPNG = selectedFile.type === "image/png";
+            if (!isPNG) {
+                setError("El archivo debe ser un PNG");
+                setFile(null);
+                setPreviewUrl(null);
+                return;
+            }
             if (selectedFile.size > 2000000) {
                 setError('El archivo excede el tamaño máximo permitido (2MB).');
                 setFile(null);
@@ -77,18 +84,11 @@ export default function App() {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
-            reader.onload = () => {resolve(reader.result)};
-            /*  // Get the full Data URL (e.g., data:image/png;base64,...)
-            const dataUrl = reader.result;
-      
-            // Extract the MIME type (e.g., image/png, image/jpeg, etc.)
-            const mimeType = dataUrl.split(',')[0].split(':')[1].split(';')[0];
-      
-            // Extract the base64-encoded image data
-            const base64 = dataUrl.split(',')[1]; 
-
-            // Resolve the promise with an object containing both the MIME type and base64 data
-            resolve({ mimeType, base64 });*/
+            reader.onload = () => {
+                const dataUrl = reader.result;
+                const base64 = dataUrl.split(',')[1]; // Only the Base64 part
+                resolve(base64);
+            };
             reader.onerror = (error) => reject(error);
         });
     };
@@ -189,7 +189,7 @@ export default function App() {
                     type="file"
                     id="file-upload"
                     className="absolute opacity-0 cursor-pointer"
-                    accept="image/*,video/*"
+                    accept="image/png"
                     onChange={handleFileChange}
                 />
 
@@ -224,7 +224,7 @@ export default function App() {
                 color="default"
                 className="bg-indigo-500 w-full rounded-2xl mt-10"
                 onPress={handleSubmit}
-                disabled={loading} // Disable the button when loading
+                disabled={loading} // Deshabilita el boton para que no haya varios registros
             >
                 {loading ? 'Registrando...' : 'Registrarse'}
             </Button>
