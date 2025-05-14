@@ -40,7 +40,7 @@ import {
 } from "@heroui/react";
 
 export default function App() {
-  
+
   const [isOpen, setIsOpen, isOpenSettings, setOpenSettings] = useState(false);
   const { isOpen: isOpenLogin, onOpen: onOpenLogin, onOpenChange: onOpenChangeLogin } = useDisclosure();
   const [size, setSize] = useState("md");
@@ -57,7 +57,6 @@ export default function App() {
     setIsOpen(false);
   };
 
-  const [isChat, setIsChat] = useState(false);
   const [isMyperfil, setIsPerfil] = useState(false);
   const [isHome, setIsHome] = useState(false);
 
@@ -86,21 +85,31 @@ export default function App() {
     onOpenChange: onOpenChangeUser
   } = useDisclosure();
 
+  //Chat logic
+
+  const [isChat, setIsChat] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+
+  const handleSelectUser = (user) => {
+    setSelectedUser(user);
+    setIsChat(true);
+  };
+
   return (
 
-    <div className="min-h-screen bg-gradient-to-br from-[#04030D] from-[80%] via-[#0A062B] via-[90%] to-[#070540]">
+
     <Navbar className="top-0 left-0 w-full" style={{ backgroundColor: "rgba(26, 22, 140, 0.3)" }}>
       <NavbarBrand className="grid justify-start">
         <p className="font-bold text-[#b30c7e]">EmpresaX</p>
       </NavbarBrand>
       <NavbarContent className="gap-15 justify-between">
         <NavbarItem>
-          <Link aria-current="page" className="hover:text-[#2EF2BB]" onClick={toggleHome}>
+          <Link href="/home" aria-current="page" className="hover:text-[#2EF2BB]">
             <HomeIcon className="size-6 text-[#2EF2BB]" />
           </Link>
         </NavbarItem>
         <NavbarItem isActive>
-          <Link aria-current="page" className="hover:text-[#2EF2BB]" onClick={toggleComponentMiPerfil}>
+          <Link href="/profile" aria-current="page" className="hover:text-[#2EF2BB]">
             <UserIcon className="size-6 text-[#2EF2BB]" />
           </Link>
         </NavbarItem>
@@ -110,15 +119,19 @@ export default function App() {
               <ChatBubbleBottomCenterIcon className="size-6 text-[#2EF2BB]" />
             </Link>
           </Badge>
-          <Drawer isOpen={isOpen} size={size} onClose={handleClose} style={{ backgroundColor: "rgba(9, 7, 43)" }} >
+          <Drawer isOpen={isOpen} size={size} onClose={handleClose} style={{ backgroundColor: "rgba(9, 7, 43)" }}>
             <DrawerContent>
               <DrawerHeader className="flex flex-col gap-1">
-                <Link aria-current="page" className="hover:text-[#2EF2BB]" onClick={toggleComponent}>
+                <Link aria-current="page" className="hover:text-[#2EF2BB]" onClick={() => setIsChat(false)}>
                   <Bars3Icon className="size-6 text-[#2EF2BB]" />
                 </Link>
               </DrawerHeader>
               <DrawerBody>
-                {isChat ? <Chat /> : <ContactList />}
+                {isChat ? (
+                  <Chat user={selectedUser} />
+                ) : (
+                  <ContactList onSelectUser={handleSelectUser} />
+                )}
               </DrawerBody>
               <DrawerFooter>
                 <Button color="danger" variant="light" onClick={handleClose} className="bg-rose-500 rounded-full text-blue-50">
@@ -212,9 +225,10 @@ export default function App() {
           <ModalContent className="relative z-60 w-4/6 max-w-[90%]">
             {(onClose) => (
               <>
-                <ModalHeader className="flex flex-col gap-1 bg-gradient-to-r from-[#1A168C] to-[#f609e2] text-2xl text-white">
+                <ModalHeader className="flex flex-col gap-1 bg-gradient-to-r from-[#1A168C] 
+                  to-[#f609e2] text-2xl text-white">
                   Informacion de usuario
-                  </ModalHeader>
+                </ModalHeader>
                 <ModalBody>
                   <EditUser />
                 </ModalBody>
@@ -222,10 +236,7 @@ export default function App() {
             )}
           </ModalContent>
         </Modal>
-
       </NavbarContent>
     </Navbar>
-    {isMyperfil ? <MiPerfil /> : <Galeria />}
-  </div>
   );
 }
