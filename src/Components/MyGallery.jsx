@@ -511,22 +511,26 @@ export default function App() {
 
         return (
             <>
-                <div className="p-5 md:p-10">
-                    <div className="columns-1 gap-5 lg:gap-8 sm:columns-3 xl:columns-4 [&>img:not(:first-child)]:mt-5 lg:[&>img:not(:first-child)]:mt-8">
-                        {cardsData.map((card) => (
-                            <CardItem
-                                key={card.id}
-                                imageSrc={card.imageSrc}
-                                avatarSrc={card.avatarSrc}
-                                name={card.name}
-                                description={card.description}
-                                descriptionImage={card.descriptionImage}
-                                topic={card.topic}
-                                title={card.title}
-                                likes={card.likes} />
-                        ))}
+                <div className="min-h-screen bg-gradient-to-br from-[#04030D] from-[80%] via-[#0A062B] via-[90%] to-[#070540]">
+                    <div className="p-5 md:p-10">
+                        <div className="columns-1 gap-5 lg:gap-8 sm:columns-3 xl:columns-4 
+                        [&>img:not(:first-child)]:mt-5 lg:[&>img:not(:first-child)]:mt-8">
+                            {cardsData.map((card) => (
+                                <CardItem
+                                    key={card.id}
+                                    imageSrc={card.imageSrc}
+                                    avatarSrc={card.avatarSrc}
+                                    name={card.name}
+                                    description={card.description}
+                                    descriptionImage={card.descriptionImage}
+                                    topic={card.topic}
+                                    title={card.title}
+                                    likes={card.likes} />
+                            ))}
+                        </div>
                     </div>
                 </div>
+                
             </>
         );
     };
