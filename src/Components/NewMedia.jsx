@@ -31,7 +31,7 @@ import {
     AutocompleteItem,
 } from "@heroui/react";
 
-export const users = [
+export const topic = [
     {
         id: 1,
         name: "Naturaleza",
@@ -127,9 +127,9 @@ export default function App() {
             />
             <Autocomplete
                 className="w-full px-4 py-2 bg-[#151320] text-white border border-gray-700 
-          rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 
-          focus:border-blue-500 transition mb-5"
-                defaultItems={users}
+                rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 
+                focus:border-blue-500 transition mb-5"
+                defaultItems={topic}
                 labelPlacement="inside"
                 placeholder="Selecciona un tema"
                 variant="bordered"
@@ -158,7 +158,7 @@ export default function App() {
                 <input
                     type="file"
                     id="file-upload"
-                    className="absolute opacity-0 cursor-pointer"
+                    className="absolute opacity-0 cursor-pointer  bottom-30 right-10 z-10"
                     accept="image/*,video/*"
                     onChange={handleFileChange}
                 />

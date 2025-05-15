@@ -28,44 +28,52 @@ export default function App() {
                 className="flex w-full"
                 style={{ background: "linear-gradient(-45deg, black 60%, rgba(179, 12, 126, 0.8) 100%)" }}
             >
-                <div className="flex flex-col sm:flex-row mb-20 mt-20 ml-5 items-center justify-between gap-5">
+                <div className="flex flex-col sm:flex-row mb-20 mt-20 ml-5 items-center justify-between gap-5 w-full">
                     <div className="flex items-center gap-3">
                         <Avatar size="lg" src="src/assets/descarga (6).jpeg" />
                         <span className="text-white font-semibold text-2xl">Solecito_1108</span>
                     </div>
-                    <div className="flex flex-wrap sm:ml-96 justify-between gap-12 mt-5 sm:mt-0">
-                        <Tooltip content="Seguidores" className="text-[#2EF2BB]">
-                            <Button
-                                onClick={() => setActiveComponent("followers")}
-                                className={`bg-transparent text-2xl rounded-full mr-5 
+                    <div className="grid grid-cols-8 mt-5 sm:mt-0 items-end">
+                        <div class="col-span-2" >
+                            <Tooltip content="Seguidores" className="text-[#2EF2BB] ">
+                                <Button
+                                    onClick={() => setActiveComponent("followers")}
+                                    className={`bg-transparent text-2xl rounded-full mr-5 
                                 ${activeComponent === "followers" ? "text-[#087c5b] border-none" : "text-[#2EF2BB]"}`}
-                            >
-                                <UserIcon className="w-6 h-6 mr-2" /> 200
-                            </Button>
-                        </Tooltip>
-                        <Tooltip content="Mis publicaciones" className="text-[#2EF2BB]">
-                            <Button
-                                onClick={() => setActiveComponent("myGallery")}
-                                className={`bg-transparent text-2xl rounded-full mr-5 
+                                >
+                                    <UserIcon className="w-6 h-6 mr-2" /> 200
+                                </Button>
+                            </Tooltip>
+                        </div>
+                        <div class="col-span-2">
+                            <Tooltip content="Mis publicaciones" className="text-[#2EF2BB] col-span-2">
+                                <Button
+                                    onClick={() => setActiveComponent("myGallery")}
+                                    className={`bg-transparent text-2xl rounded-full mr-5 
                                 ${activeComponent === "myGallery" ? "text-[#087c5b]" : "text-[#2EF2BB]"}`}
-                            >
-                                <PhotoIcon className="w-6 h-6 mr-2" /> 200
-                            </Button>
-                        </Tooltip>
-                        <Tooltip content="Favoritos" className="text-[#2EF2BB]">
-                            <Button
-                                onClick={() => setActiveComponent("gallery")}
-                                className={`bg-transparent text-2xl rounded-full 
+                                >
+                                    <PhotoIcon className="w-6 h-6 mr-2" /> 200
+                                </Button>
+                            </Tooltip>
+                        </div>
+                        <div class="col-span-2" >
+                            <Tooltip content="Favoritos" className="text-[#2EF2BB] col-span-2">
+                                <Button
+                                    onClick={() => setActiveComponent("gallery")}
+                                    className={`bg-transparent text-2xl rounded-full 
                                 ${activeComponent === "gallery" ? "text-[#087c5b]" : "text-[#2EF2BB]"}`}
-                            >
-                                <HeartIcon className="w-6 h-6 mr-2" /> 200
-                            </Button>
-                        </Tooltip>
-                        <Tooltip content="Nueva publicacion" className="text-[#2EF2BB]">
-                            <Button className="text-[#2EF2BB] rounded-2xl text-2xl" onPress={() => onOpenLogin()}>
-                                <PlusIcon className="w-6 h-6 mr-2" />Nuevo
-                            </Button>
-                        </Tooltip>
+                                >
+                                    <HeartIcon className="w-6 h-6 mr-2" /> 200
+                                </Button>
+                            </Tooltip>
+                        </div>
+                        <div class="col-span-2">
+                            <Tooltip content="Nueva publicacion" className="text-[#2EF2BB] col-span-2">
+                                <Button className="text-[#2EF2BB] rounded-2xl text-2xl" onPress={() => onOpenLogin()}>
+                                    <PlusIcon className="w-6 h-6 mr-2" />Nuevo
+                                </Button>
+                            </Tooltip>
+                        </div>
                         <Modal
                             isOpen={isOpenLogin}
                             onOpenChange={onOpenChangeLogin}
@@ -89,7 +97,7 @@ export default function App() {
                     </div>
                 </div>
             </div>
-            <div className="mt-10">
+            <div>
                 {activeComponent === "followers" && <Followers />}
                 {activeComponent === "myGallery" && <MyGallery />}
                 {activeComponent === "gallery" && <Gallery />}

@@ -13,6 +13,7 @@ import {
   Link,
   Badge,
 } from "@heroui/react";
+import { useNavigate } from 'react-router-dom';
 
 export const columns = [
   { name: "My contacts", uid: "name" },
@@ -105,34 +106,43 @@ export const users = [
 ];
 
 
-export default function App() {
-  const renderCell = React.useCallback((user, columnKey) => {
+export default function ContactList({ onSelectUser }) {
+  const navigate = useNavigate();
+
+  const handleClick = (user) => {
+    onSelectUser(user);
+  };
+
+  const renderCell = (user, columnKey) => {
     const cellValue = user[columnKey];
 
     switch (columnKey) {
       case "name":
         return (
           <User
-            avatarProps={{ radius: "rounded", src: user.avatar, }}
+            avatarProps={{ radius: "rounded", src: user.avatar }}
             name={cellValue}
             className="rounded mb-6 text-center"
-            rounded >
-          </User>
+            rounded
+          />
         );
       case "actions":
         return (
           <div className="flex justify-center items-center">
-          <Badge color="danger" content="5" shape="circle" className="bg-rose-500 border-none text-black">
-            <Link aria-current="page" href="#" className="hover:text-[#2EF2BB]">
-              <ChatBubbleBottomCenterIcon className="size-6 text-[#2EF2BB]" />
-            </Link>
-          </Badge>
-        </div>
+            <Badge color="danger" content="5" shape="circle" className="bg-rose-500 border-none text-black">
+              <Link
+                onClick={() => handleClick(user)}
+                className="hover:text-[#2EF2BB]"
+              >
+                <ChatBubbleBottomCenterIcon className="size-6 text-[#2EF2BB]" />
+              </Link>
+            </Badge>
+          </div>
         );
       default:
         return cellValue;
     }
-  }, []);
+  };
 
   return (
     <Table aria-label="Example table with custom cells" className=" h-screen bg-black p-0" >
