@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from "react";
 import { EyeIcon } from "@heroicons/react/24/solid";
 import { EyeSlashIcon } from "@heroicons/react/24/solid";
 import Register from "./Register.jsx"
+import { useUserContext } from "../context/UserProvider";
+import { useUsers } from "../hooks/useUsers.jsx";
 import {
     Navbar,
     NavbarBrand,
@@ -36,8 +38,27 @@ export default function App() {
     const toggleVisibility = () => setIsVisible(!isVisible);
 
     const [backdrop, setBackdrop] = useState("blur");
+    const [correo, setCorreo] = useState('');
+    const [contra, setContra] = useState('');
+    const { setSelectedUser } = useUserContext ();
+    const { verifyUser, getUser, loading } = useUsers();
 
     const { isOpen: isOpenLogin, onOpen: onOpenLogin, onOpenChange: onOpenChangeLogin } = useDisclosure();
+    const handleLogin = async () => {
+        try {
+          const isValid = await verifyUser(correo, contra);
+          if (isValid) {
+            const userInfo = await getUser(correo);
+            console.log("Info usuario:", userInfo);
+            setSelectedUser(userInfo);
+          } else {
+            console.log("Credenciales no validas");
+          }
+        } catch (error) {
+          console.error("Error logging in:", error);
+        }
+      };
+      
     return (
         <div className="w-full gap-10 py-6">
             <Input
@@ -46,6 +67,8 @@ export default function App() {
                 className="w-full px-4 py-2 bg-[#151320] text-white border
                  border-gray-700 rounded-xl focus:outline-none focus:ring-2
                   focus:ring-blue-500 focus:border-blue-500 transition mb-7"
+                value={correo}
+                onChange={(e)=>setCorreo(e.target.value)}
             />
             <Input
                 className="w-full px-4 py-2 bg-[#151320] text-white border border-gray-700 
@@ -68,6 +91,8 @@ export default function App() {
                 placeholder="Enter your password"
                 type={isVisible ? "text" : "password"}
                 variant="bordered"
+                value={contra}
+                onChange={(e)=>setContra(e.target.value)}
             />
             <div className="w-full p-10 flex justify-center ">
                 <span>¿No tienes cuenta?</span>
@@ -98,7 +123,10 @@ export default function App() {
                     </ModalContent>
                 </Modal>
             </div>
-            <Button color="default" className="bg-indigo-500 w-full rounded-2xl">LogIn</Button>
+            <Button color="default" className="bg-indigo-500 w-full rounded-2xl"
+            isLoading={loading}
+            onPress={handleLogin}>
+            LogIn</Button>
         </div>
     );
 }

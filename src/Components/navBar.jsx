@@ -12,6 +12,7 @@ import MiPerfil from "./MiPerfil.jsx";
 import Login from "./Login.jsx";
 import EditUser from "./EditUser.jsx";
 import Filter from "./Filters.jsx"
+
 import {
   Navbar,
   NavbarBrand,
@@ -41,8 +42,11 @@ import {
 
 export default function App() {
 
+
   const [isOpen, setIsOpen, isOpenSettings, setOpenSettings] = useState(false);
-  const { isOpen: isOpenLogin, onOpen: onOpenLogin, onOpenChange: onOpenChangeLogin } = useDisclosure();
+  const { isOpen: isOpenLogin, onOpen: onOpenLogin, onOpenChange: onOpenChangeLogin } = useDisclosure(); 
+  const [isOpen, setIsOpen] = useState(false);
+
   const [size, setSize] = useState("md");
   const [backdrop, setBackdrop] = useState("blur");
 

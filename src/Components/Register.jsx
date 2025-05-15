@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { EyeIcon } from "@heroicons/react/24/solid";
 import { EyeSlashIcon } from "@heroicons/react/24/solid";
 import { CalendarDate } from "@internationalized/date";
+import { useUsers } from "../hooks/useUsers.jsx";
 import { ArrowUpOnSquareIcon } from "@heroicons/react/24/solid";
 import Register from "./Register.jsx"
 import {
@@ -42,11 +43,26 @@ export default function App() {
     const [file, setFile] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
     const [error, setError] = useState('');
+    //logica usuario tomando en cuenta que file es la foto de perfil
+    const [correo, setCorreo] = useState('');
+    const [nombre, setNombre] = useState('');
+    const [apellido, setApellido] = useState('');
+    const [nombre_usuario, setNombreUsuario] = useState('');
+    const [contra, setContra] = useState('');
+
+    const { addUser, loading } = useUsers();
 
     const handleFileChange = (event) => {
         const selectedFile = event.target.files[0];
 
         if (selectedFile) {
+            const isPNG = selectedFile.type === "image/png";
+            if (!isPNG) {
+                setError("El archivo debe ser un PNG");
+                setFile(null);
+                setPreviewUrl(null);
+                return;
+            }
             if (selectedFile.size > 2000000) {
                 setError('El archivo excede el tamaño máximo permitido (2MB).');
                 setFile(null);
@@ -64,28 +80,83 @@ export default function App() {
         }
     };
 
+    const convertToBase64 = (file) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => {
+                const dataUrl = reader.result;
+                const base64 = dataUrl.split(',')[1]; // Only the Base64 part
+                resolve(base64);
+            };
+            reader.onerror = (error) => reject(error);
+        });
+    };
+
+    const handleSubmit = async () => {
+        try {
+            const userData = { 
+                correo: correo,
+                nombre: nombre,
+                apellido: apellido,
+                nombre_usuario: nombre_usuario,
+                contra,
+                foto_perfil: file ? await convertToBase64(file) : null, 
+                
+            };
+    
+            const response = await addUser(userData);
+            console.log("User added successfully:", userData.foto_perfil);
+    
+            setCorreo('');
+            setNombre('');
+            setApellido('');
+            setNombreUsuario('');
+            setContra('');
+            setFile(null);
+            setPreviewUrl(null);
+        } catch (error) {
+            console.error("Error adding user:", error);
+        }
+    };
+
     return (
-        <div className="w-full gap-5 py-5">
-            <Input
-                type="Text"
-                placeholder="Nombre de usuario"
-                className="w-full px-4 py-2 bg-[#151320] text-white border
-                 border-gray-700 rounded-xl focus:outline-none focus:ring-2
-                  focus:ring-blue-500 focus:border-blue-500 transition mb-5"
-            />
-            <Input
-                type="Text"
-                placeholder="Ingresa tu nombre completo"
-                className="w-full px-4 py-2 bg-[#151320] text-white border
-                 border-gray-700 rounded-xl focus:outline-none focus:ring-2
-                  focus:ring-blue-500 focus:border-blue-500 transition mb-5"
-            />
+       <div className="w-full gap-5 py-5">
             <Input
                 type="Email"
                 placeholder="Ingresa tu correo"
                 className="w-full px-4 py-2 bg-[#151320] text-white border
                  border-gray-700 rounded-xl focus:outline-none focus:ring-2
                   focus:ring-blue-500 focus:border-blue-500 transition mb-5"
+                  value={correo} 
+                  onChange={(e) => setCorreo(e.target.value)} 
+            />
+            <Input
+                type="Text"
+                placeholder="Ingresa tu nombre"
+                className="w-full px-4 py-2 bg-[#151320] text-white border
+                 border-gray-700 rounded-xl focus:outline-none focus:ring-2
+                  focus:ring-blue-500 focus:border-blue-500 transition mb-5"
+                value={nombre} 
+                onChange={(e) => setNombre(e.target.value)} 
+            />
+            <Input
+                type="Text"
+                placeholder="Ingresa tu primer apellido"
+                className="w-full px-4 py-2 bg-[#151320] text-white border
+                 border-gray-700 rounded-xl focus:outline-none focus:ring-2
+                  focus:ring-blue-500 focus:border-blue-500 transition mb-5"
+                value={apellido} // Bind to state
+                onChange={(e) => setApellido(e.target.value)} // Handle change
+            />
+             <Input
+                type="Text"
+                placeholder="Ingresa tu nombre de usuario"
+                className="w-full px-4 py-2 bg-[#151320] text-white border
+                 border-gray-700 rounded-xl focus:outline-none focus:ring-2
+                  focus:ring-blue-500 focus:border-blue-500 transition mb-5"
+                value={nombre_usuario} 
+                onChange={(e) => setNombreUsuario(e.target.value)} 
             />
             <Input
                 className="w-full px-4 py-2 bg-[#151320] text-white border border-gray-700 
@@ -105,20 +176,20 @@ export default function App() {
                         )}
                     </button>
                 }
-                placeholder="Enter your password"
+                placeholder="Ingrese su contraseña"
                 type={isVisible ? "text" : "password"}
+                value={contra} // Bind to state
+                onChange={(e) => setContra(e.target.value)} // Handle change
                 variant="bordered"
             />
-            <div className="w-full mt-5 px-4 py-2 bg-[#151320] 
-            text-white border border-gray-700 rounded-xl focus:outline-none focus:ring-2 
-            focus:ring-blue-500 focus:border-blue-500 transition grid items-center justify-center gap-2 p-2">
+            <div className="w-full mt-5 px-4 py-2 bg-[#151320] text-white border border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition grid items-center justify-center gap-2 p-2">
                 <p className="text-gray-300 text-sm mb-2 flex justify-center">Foto de perfil</p>
 
                 <input
                     type="file"
                     id="file-upload"
-                    className="absolute opacity-0 cursor-pointer  bottom-35 right-10 z-10"
-                    accept="image/*,video/*"
+                    className="absolute opacity-0 cursor-pointer"
+                    accept="image/png"
                     onChange={handleFileChange}
                 />
 
@@ -149,7 +220,14 @@ export default function App() {
 
                 {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
             </div>
-            <Button color="default" className="bg-indigo-500 w-full rounded-2xl mt-10">Registrarse</Button>
+            <Button
+                color="default"
+                className="bg-indigo-500 w-full rounded-2xl mt-10"
+                onPress={handleSubmit}
+                disabled={loading} // Deshabilita el boton para que no haya varios registros
+            >
+                {loading ? 'Registrando...' : 'Registrarse'}
+            </Button>
         </div>
     );
 }
