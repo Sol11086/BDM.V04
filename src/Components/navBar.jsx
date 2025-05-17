@@ -57,6 +57,7 @@ export default function App() {
   const handleOpen = (size) => {
     setSize(size);
     setIsOpen(true);
+    //console.log(selectedUser.correo);
   };
 
   const handleClose = () => {
@@ -99,6 +100,7 @@ export default function App() {
   const handleSelectUser = (user) => {
     setChatRecipient(user);
     setIsChat(true);
+    
   };
 
   return (
@@ -119,6 +121,7 @@ export default function App() {
               <UserIcon className="size-6 text-[#2EF2BB]" />
             </Link>
           </NavbarItem>
+          {selectedUser && (
         <NavbarItem>
           <Badge color="danger" content="5" shape="circle" className="bg-rose-500 border-none">
             <Link aria-current="page" className="hover:text-[#2EF2BB]" onClick={() => handleOpen(size)}>
@@ -137,7 +140,6 @@ export default function App() {
                   <Chat user={chatRecipient} />
                 ) : (
                   <ContactList onChatRecipient={handleSelectUser} />
-
                 )}
               </DrawerBody>
               <DrawerFooter>
@@ -148,6 +150,7 @@ export default function App() {
             </DrawerContent>
           </Drawer>
         </NavbarItem>
+      )}
       </NavbarContent>
       <NavbarContent className="items-center" justify="end">
         <Input

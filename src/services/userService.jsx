@@ -37,3 +37,9 @@ export const credentialsUser = async (correo, contra) =>{
     contra: contra
   })
 };
+
+export const listContactos = async (correo) =>{
+  return userApi.listContactos({
+    correo: correo
+  })
+};

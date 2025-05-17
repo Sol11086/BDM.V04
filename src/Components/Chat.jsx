@@ -46,7 +46,7 @@ export default function Chat({ user }) {
       <div className="top-0 bg-black h-screen m-0 rounded-b-lg flex flex-col">
         <div className="h-15 bg-[#1A168C] w-full flex items-center rounded-t-lg px-4">
           <Avatar src={user?.avatar} />
-          <p className="text-white ml-3 font-semibold">{user?.name}</p>
+          <p className="text-white ml-3 font-semibold">{user?.contacto}</p>
         </div>
         <div ref={chatBoxRef} className="flex-grow overflow-y-auto p-4 space-y-2">
           {messages.map((msg, index) => (
