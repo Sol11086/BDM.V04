@@ -23,8 +23,8 @@ export default function App() {
     const { isOpen: isOpenLogin, onOpen: onOpenLogin, onOpenChange: onOpenChangeLogin } = useDisclosure();
     const [backdrop, setBackdrop] = useState("blur");
 
-     const { selectedUser } = useUserContext();
-
+    const { selectedUser } = useUserContext();
+    //console.log(selectedUser.id_usuarios); 
     return (
         <div className="min-h-screen w-full items-center" style={{ backgroundColor: "rgba(26, 22, 140, 0.3)" }}>
             <div
@@ -32,13 +32,21 @@ export default function App() {
                 style={{ background: "linear-gradient(-45deg, black 60%, rgba(179, 12, 126, 0.8) 100%)" }}
             >
                 <div className="flex flex-col sm:flex-row mb-20 mt-20 ml-5 items-center justify-between gap-5 w-full">
+                {!selectedUser ? (
+                <div className="text-white">Cargando usuario...</div>
+                ) : (
                     <div className="flex items-center gap-3">
-                        <Avatar size="lg"
-                        src={`data:image/png;base64,${selectedUser?.foto_perfil}`} />
-                        <span className="text-white font-semibold text-2xl"> {selectedUser?.id_usuarios}</span>
-                    </div>
+                    <Avatar
+                    size="lg"
+                    src={`data:image/png;base64,${selectedUser.foto_perfil}`}
+                    />
+                    <span className="text-white font-semibold text-2xl">
+                    {selectedUser.id_usuarios}
+                    </span>
+                </div>
+                )}
                     <div className="grid grid-cols-8 mt-5 sm:mt-0 items-end">
-                        <div class="col-span-2" >
+                        <div className="col-span-2" >
                             <Tooltip content="Seguidores" className="text-[#2EF2BB] ">
                                 <Button
                                     onClick={() => setActiveComponent("followers")}
@@ -49,7 +57,7 @@ export default function App() {
                                 </Button>
                             </Tooltip>
                         </div>
-                        <div class="col-span-2">
+                        <div className="col-span-2">
                             <Tooltip content="Mis publicaciones" className="text-[#2EF2BB] col-span-2">
                                 <Button
                                     onClick={() => setActiveComponent("myGallery")}
@@ -60,7 +68,7 @@ export default function App() {
                                 </Button>
                             </Tooltip>
                         </div>
-                        <div class="col-span-2" >
+                        <div className="col-span-2" >
                             <Tooltip content="Favoritos" className="text-[#2EF2BB] col-span-2">
                                 <Button
                                     onClick={() => setActiveComponent("gallery")}
@@ -71,7 +79,7 @@ export default function App() {
                                 </Button>
                             </Tooltip>
                         </div>
-                        <div class="col-span-2">
+                        <div className="col-span-2">
                             <Tooltip content="Nueva publicacion" className="text-[#2EF2BB] col-span-2">
                                 <Button className="text-[#2EF2BB] rounded-2xl text-2xl" onPress={() => onOpenLogin()}>
                                     <PlusIcon className="w-6 h-6 mr-2" />Nuevo

@@ -1,4 +1,5 @@
 import React from "react";
+import { useUsers } from "../hooks/useUsers.jsx";
 import { ChatBubbleBottomCenterIcon } from "@heroicons/react/16/solid";
 import {
   Table,
@@ -106,11 +107,11 @@ export const users = [
 ];
 
 
-export default function ContactList({ onSelectUser }) {
+export default function ContactList({ onChatRecipient }) {
   const navigate = useNavigate();
 
   const handleClick = (user) => {
-    onSelectUser(user);
+    onChatRecipient(user);
   };
 
   const renderCell = (user, columnKey) => {

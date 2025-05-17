@@ -12,8 +12,19 @@ const listUsuario = (payload) => {
 const verifyUsuario = (payload)=>{
   return httpClient.post('/user/verify', payload);
 }
+
+const manageContactos = (payload)=>{
+  return httpClient.post('/user/manageContactos', payload);
+}
+
+const listContactos = (payload)=>{
+  return httpClient.post('/user/listContactos', payload);
+}
+
 export default {
   manageUsuario,
   listUsuario,
   verifyUsuario,
+  manageContactos,
+  listContactos,
 };

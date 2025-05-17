@@ -5,7 +5,7 @@ import { createUser, updateUser, deleteUser, listUser, credentialsUser} from '..
 export const useUsers = () => {
   const [loading, setLoading] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null); //aqui almaceno la info de mi usuario
-
+  
   const addUser = async (userData) => {
     setLoading(true);
     try {
@@ -58,12 +58,24 @@ export const useUsers = () => {
     }
   }
 
+  const getContacts = async (correo) => {
+    setLoading(true);
+    try {
+      const res = await listContactos(correo);
+      //setSelectedUser(res.data); 
+      return res.data;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     addUser,
     editUser,
     removeUser,
     getUser,
     verifyUser,
+    getContacts,
     selectedUser,
     loading,
   };

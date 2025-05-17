@@ -117,7 +117,7 @@ export default function Folllowers() {
 
     const [isChat, setIsChat] = useState(false);
 
-    const [selectedUser, setSelectedUser] = React.useState(null);
+    const [chatRecipient, setChatRecipient] = React.useState(null);
     const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
 
     const handleChatClick = (user) => {
@@ -133,7 +133,7 @@ export default function Folllowers() {
 
 
     const handleSelectUser = (user) => {
-        setSelectedUser(user);
+        setChatRecipient(user);
         setIsChat(true);
     };
 
@@ -213,9 +213,9 @@ export default function Folllowers() {
                     </DrawerHeader>
                     <DrawerBody>
                         {isChat ? (
-                            <Chat user={selectedUser} />
+                            <Chat user={chatRecipient} />
                         ) : (
-                            <ContactList onSelectUser={handleSelectUser} />
+                            <ContactList onChatRecipient={handleSelectUser} />
                         )}
                     </DrawerBody>
                     <DrawerFooter>

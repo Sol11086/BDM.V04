@@ -12,6 +12,7 @@ import MiPerfil from "./MiPerfil.jsx";
 import Login from "./Login.jsx";
 import EditUser from "./EditUser.jsx";
 import Filter from "./Filters.jsx"
+import { useUserContext } from "../context/UserProvider";
 
 import {
   Navbar,
@@ -45,8 +46,9 @@ export default function App() {
 
   const [isOpen, setIsOpen, isOpenSettings, setOpenSettings] = useState(false);
   const { isOpen: isOpenLogin, onOpen: onOpenLogin, onOpenChange: onOpenChangeLogin } = useDisclosure(); 
-  const [isOpen, setIsOpen] = useState(false);
-
+  //const [isOpen, setIsOpen] = useState(false);
+  const { selectedUser } = useUserContext();
+  const [chatRecipient, setChatRecipient] = useState(null); // local chat recipient
   const [size, setSize] = useState("md");
   const [backdrop, setBackdrop] = useState("blur");
 
@@ -92,10 +94,10 @@ export default function App() {
   //Chat logic
 
   const [isChat, setIsChat] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
+  //const [selectedUser, setSelectedUser] = useState(null);
 
   const handleSelectUser = (user) => {
-    setSelectedUser(user);
+    setChatRecipient(user);
     setIsChat(true);
   };
 
@@ -113,10 +115,10 @@ export default function App() {
           </Link>
         </NavbarItem>
         <NavbarItem isActive>
-          <Link href="/profile" aria-current="page" className="hover:text-[#2EF2BB]">
-            <UserIcon className="size-6 text-[#2EF2BB]" />
-          </Link>
-        </NavbarItem>
+            <Link href="/profile" aria-current="page" className="hover:text-[#2EF2BB]">
+              <UserIcon className="size-6 text-[#2EF2BB]" />
+            </Link>
+          </NavbarItem>
         <NavbarItem>
           <Badge color="danger" content="5" shape="circle" className="bg-rose-500 border-none">
             <Link aria-current="page" className="hover:text-[#2EF2BB]" onClick={() => handleOpen(size)}>
@@ -132,9 +134,10 @@ export default function App() {
               </DrawerHeader>
               <DrawerBody>
                 {isChat ? (
-                  <Chat user={selectedUser} />
+                  <Chat user={chatRecipient} />
                 ) : (
-                  <ContactList onSelectUser={handleSelectUser} />
+                  <ContactList onChatRecipient={handleSelectUser} />
+
                 )}
               </DrawerBody>
               <DrawerFooter>
