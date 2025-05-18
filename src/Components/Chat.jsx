@@ -36,7 +36,7 @@ export default function Chat({ user }) {
         if (response.data && response.data.status === 'success') {
           setMessages(response.data.messages.map(msg => ({
             text: msg.texto,
-            sender: msg.emisor === user?.id ? "user" : "bot",
+            sender: msg.emisor === selectedUser.id_usuarios ? "user" : "bot",
             timestamp: msg.timestamp
           })));
         }
@@ -47,10 +47,10 @@ export default function Chat({ user }) {
       }
     };
 
-    if (user?.id && userId) {
+    if (selectedUser.id_usuarios && user.contacto) {
       fetchMessages();
     }
-  }, [user?.id, userId]);
+  }, [selectedUser.id_usuarios, user.contacto]);
 
   // Handle sending new messages
   const sendMessage = async () => {
@@ -98,7 +98,7 @@ export default function Chat({ user }) {
           {loading ? (
             <div className="text-center text-gray-400">Loading messages...</div>
           ) : messages.length === 0 ? (
-            <div className="text-center text-gray-400">No messages yet. Start a conversation!</div>
+            <div className="text-center text-gray-400">No hay mensajes aun. Inicia un chat!</div>
           ) : (
             messages.map((msg, index) => (
               <div
