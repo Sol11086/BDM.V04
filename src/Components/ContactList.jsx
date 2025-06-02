@@ -1,5 +1,7 @@
-import React from "react";
+// codigo que fetchea contactos del frontend
+import React, { useEffect, useState } from "react";
 import { useUsers } from "../hooks/useUsers.jsx";
+import { useUserContext } from "../context/UserProvider";
 import { ChatBubbleBottomCenterIcon } from "@heroicons/react/16/solid";
 import {
   Table,
@@ -9,8 +11,6 @@ import {
   TableRow,
   TableCell,
   User,
-  Chip,
-  Tooltip,
   Link,
   Badge,
 } from "@heroui/react";
@@ -21,108 +21,50 @@ export const columns = [
   { name: "", uid: "actions" },
 ];
 
-export const users = [
-  {
-    id: 1,
-    name: "Tony Reichert",
-    role: "CEO",
-    team: "Management",
-    status: "active",
-    age: "29",
-    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
-  },
-  {
-    id: 2,
-    name: "Zoey Lang",
-    role: "Technical Lead",
-    team: "Development",
-    status: "paused",
-    age: "25",
-    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704d",
-  },
-  {
-    id: 3,
-    name: "Jane Fisher",
-    role: "Senior Developer",
-    team: "Development",
-    status: "active",
-    age: "22",
-    avatar: "https://i.pravatar.cc/150?u=a04258114e29026702d",
-  },
-  {
-    id: 4,
-    name: "William Howard",
-    role: "Community Manager",
-    team: "Marketing",
-    status: "vacation",
-    age: "28",
-    avatar: "https://i.pravatar.cc/150?u=a048581f4e29026701d",
-  },
-  {
-    id: 5,
-    name: "Kristen Copper",
-    role: "Sales Manager",
-    team: "Sales",
-    status: "active",
-    age: "24",
-    avatar: "https://i.pravatar.cc/150?u=a092581d4ef9026700d",
-  },
-  {
-    id: 6,
-    name: "Kristen Copper",
-    role: "Sales Manager",
-    team: "Sales",
-    status: "active",
-    age: "24",
-    avatar: "https://i.pravatar.cc/150?u=a092581d4ef9026700d",
-  },
-  {
-    id: 7,
-    name: "Kristen Copper",
-    role: "Sales Manager",
-    team: "Sales",
-    status: "active",
-    age: "24",
-    avatar: "https://i.pravatar.cc/150?u=a092581d4ef9026700d",
-  },
-  {
-    id: 8,
-    name: "Kristen Copper",
-    role: "Sales Manager",
-    team: "Sales",
-    status: "active",
-    age: "24",
-    avatar: "https://i.pravatar.cc/150?u=a092581d4ef9026700d",
-  },
-  {
-    id: 9,
-    name: "Kristen Copper",
-    role: "Sales Manager",
-    team: "Sales",
-    status: "active",
-    age: "24",
-    avatar: "https://i.pravatar.cc/150?u=a092581d4ef9026700d",
-  },
-
-];
-
-
 export default function ContactList({ onChatRecipient }) {
+  const { getContacts } = useUsers();
+  const { selectedUser } = useUserContext();
+  const [contacts, setContacts] = useState([]);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (selectedUser) {
+      //console.log("selectedUser is set:", selectedUser.id_usuarios);
+       const fetchContacts = async () => {
+        try {
+          const res = await getContacts(selectedUser.id_usuarios);
+          //console.log("Fetched contacts:", res);
+          setContacts(res.contactos);
+        } catch (err) {
+          console.error("Error fetching contacts:", err);
+        }
+      };
+  
+      fetchContacts(); 
+    } else {
+      console.log("No hay usuario");
+    }
+  }, [selectedUser]);
+ 
   const handleClick = (user) => {
     onChatRecipient(user);
+    //console.log("Clicked user:", user)
+
   };
 
   const renderCell = (user, columnKey) => {
-    const cellValue = user[columnKey];
+    //console.log("Rendering user:", user);
 
     switch (columnKey) {
       case "name":
         return (
           <User
-            avatarProps={{ radius: "rounded", src: user.avatar }}
-            name={cellValue}
+            avatarProps={{
+              radius: "rounded",
+              src: `data:image/png;base64,${user.foto_perfil}` || "https://i.pravatar.cc/150",
+            }}
+            name={user.contacto}
+            //description={user.contacto}
             className="rounded mb-6 text-center"
             rounded
           />
@@ -131,33 +73,36 @@ export default function ContactList({ onChatRecipient }) {
         return (
           <div className="flex justify-center items-center">
             <Badge color="danger" content="5" shape="circle" className="bg-rose-500 border-none text-black">
-              <Link
-                onClick={() => handleClick(user)}
-                className="hover:text-[#2EF2BB]"
-              >
+              <Link onClick={() => handleClick(user)} className="hover:text-[#2EF2BB]">
                 <ChatBubbleBottomCenterIcon className="size-6 text-[#2EF2BB]" />
               </Link>
             </Badge>
           </div>
         );
       default:
-        return cellValue;
+        return user[columnKey];
     }
   };
 
   return (
-    <Table aria-label="Example table with custom cells" className=" h-screen bg-black p-0" >
+    <Table aria-label="Contacts table" className="h-screen bg-black p-0">
       <TableHeader columns={columns}>
         {(column) => (
-          <TableColumn key={column.uid} align={column.uid === "actions" ? "center" : "start"} className="text-blue-50 text-center">
+          <TableColumn
+            key={column.uid}
+            align={column.uid === "actions" ? "center" : "start"}
+            className="text-blue-50 text-center"
+          >
             {column.name}
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody items={users} >
+      <TableBody items={contacts}>
         {(item) => (
-          <TableRow key={item.id} className="text-blue-50 items-center">
-            {(columnKey) => <TableCell >{renderCell(item, columnKey)}</TableCell>}
+          <TableRow key={item.contacto}>
+            {(columnKey) => (
+              <TableCell>{renderCell(item, columnKey)}</TableCell>
+            )}
           </TableRow>
         )}
       </TableBody>

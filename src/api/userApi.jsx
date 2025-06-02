@@ -21,6 +21,11 @@ const listContactos = (payload)=>{
   return httpClient.post('/user/listContactos', payload);
 }
 
+const sendMessages = (payload)=>{
+  return httpClient.post('/websocket/sendMessage', payload);
+}
+
+
 export default {
   manageUsuario,
   listUsuario,

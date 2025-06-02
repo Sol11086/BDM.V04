@@ -1,6 +1,6 @@
 // src/hooks/useUsers.js
 import { useState } from 'react';
-import { createUser, updateUser, deleteUser, listUser, credentialsUser} from '../services/userService';
+import { createUser, updateUser, deleteUser, listUser, credentialsUser, listContactos} from '../services/userService';
 
 export const useUsers = () => {
   const [loading, setLoading] = useState(false);
@@ -40,7 +40,7 @@ export const useUsers = () => {
     setLoading(true);
     try {
       const res = await listUser(correo);
-      setSelectedUser(res.data); 
+      //setSelectedUser(res.data); 
       return res.data;
     } finally {
       setLoading(false);
