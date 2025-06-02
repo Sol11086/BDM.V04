@@ -30,45 +30,52 @@ import {
     ModalBody,
     ModalFooter,
     Badge,
+    Alert,
     DateInput,
 } from "@heroui/react";
 
 
 export default function App() {
-    const [isVisible, setIsVisible] = React.useState(false);
-
+    const [isVisible, setIsVisible] = React.useState(false); // Para la visibilidad de la contraseña
     const toggleVisibility = () => setIsVisible(!isVisible);
-
 
     const [file, setFile] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
-    const [error, setError] = useState('');
-    //logica usuario tomando en cuenta que file es la foto de perfil
+    const [fileError, setFileError] = useState(''); // Renombrado para evitar conflicto con 'error' de alerta
+
+    // Estados para los campos del formulario
     const [correo, setCorreo] = useState('');
     const [nombre, setNombre] = useState('');
     const [apellido, setApellido] = useState('');
     const [nombre_usuario, setNombreUsuario] = useState('');
     const [contra, setContra] = useState('');
 
+    // Estados para la alerta
+    const [showAlert, setShowAlert] = useState(false);
+    const [alertMessage, setAlertMessage] = useState('');
+    const [alertColor, setAlertColor] = useState('red'); // 'red' para error, 'green' para éxito
+    const [alertTitle, setAlertTitle] = useState('');
+
     const { addUser, loading } = useUsers();
 
     const handleFileChange = (event) => {
         const selectedFile = event.target.files[0];
+        setFileError(''); // Limpiar errores previos del archivo
 
         if (selectedFile) {
             const isPNG = selectedFile.type === "image/png";
             if (!isPNG) {
-                setError("El archivo debe ser un PNG");
+                setFileError("El archivo debe ser un PNG.");
                 setFile(null);
                 setPreviewUrl(null);
                 return;
             }
             if (selectedFile.size > 2000000) {
-                setError('El archivo excede el tamaño máximo permitido (2MB).');
+                setFileError('El archivo excede el tamaño máximo permitido (2MB).');
                 setFile(null);
                 setPreviewUrl(null);
             } else {
-                setError('');
+                setFileError('');
                 setFile(selectedFile);
 
                 const reader = new FileReader();
@@ -77,6 +84,9 @@ export default function App() {
                 };
                 reader.readAsDataURL(selectedFile);
             }
+        } else {
+            setFile(null);
+            setPreviewUrl(null);
         }
     };
 
@@ -86,7 +96,7 @@ export default function App() {
             reader.readAsDataURL(file);
             reader.onload = () => {
                 const dataUrl = reader.result;
-                const base64 = dataUrl.split(',')[1]; // Only the Base64 part
+                const base64 = dataUrl.split(',')[1]; // Solo la parte Base64
                 resolve(base64);
             };
             reader.onerror = (error) => reject(error);
@@ -94,42 +104,111 @@ export default function App() {
     };
 
     const handleSubmit = async () => {
+        // Limpiar alertas previas
+        setShowAlert(false);
+
+        // Validaciones de campos
+        if (!correo || !nombre || !apellido || !nombre_usuario || !contra) {
+            setAlertTitle('Campos Incompletos');
+            setAlertMessage('Por favor, completa todos los campos para registrarte.');
+            setAlertColor('red');
+            setShowAlert(true);
+            return;
+        }
+
+        // Validación de formato de correo (básica)
+        if (!/\S+@\S+\.\S+/.test(correo)) {
+            setAlertTitle('Correo Inválido');
+            setAlertMessage('Por favor, ingresa un formato de correo electrónico válido.');
+            setAlertColor('red');
+            setShowAlert(true);
+            return;
+        }
+
+        // Validación de la contraseña (ejemplo: mínimo 6 caracteres)
+        if (contra.length < 6) {
+            setAlertTitle('Contraseña Débil');
+            setAlertMessage('La contraseña debe tener al menos 6 caracteres.');
+            setAlertColor('red');
+            setShowAlert(true);
+            return;
+        }
+
+        if (fileError) { // Si hay un error con el archivo, no permitir el registro
+            setAlertTitle('Error con la Foto de Perfil');
+            setAlertMessage(fileError); // Muestra el mensaje de error del archivo
+            setAlertColor('red');
+            setShowAlert(true);
+            return;
+        }
+
         try {
-            const userData = { 
+            const userData = {
                 correo: correo,
                 nombre: nombre,
                 apellido: apellido,
                 nombre_usuario: nombre_usuario,
                 contra,
-                foto_perfil: file ? await convertToBase64(file) : null, 
-                
+                foto_perfil: file ? await convertToBase64(file) : null,
             };
-    
+
             const response = await addUser(userData);
-            console.log("User added successfully:", userData.foto_perfil);
-    
-            setCorreo('');
-            setNombre('');
-            setApellido('');
-            setNombreUsuario('');
-            setContra('');
-            setFile(null);
-            setPreviewUrl(null);
+
+            // Asumiendo que `addUser` puede retornar un indicador de éxito o un error específico
+            if (response && response.success) { // Ajusta esto según lo que retorne tu `addUser`
+                setAlertTitle('¡Registro Exitoso!');
+                setAlertMessage('Tu cuenta ha sido creada exitosamente.');
+                setAlertColor('green');
+                setShowAlert(true);
+
+                // Limpiar el formulario
+                setCorreo('');
+                setNombre('');
+                setApellido('');
+                setNombreUsuario('');
+                setContra('');
+                setFile(null);
+                setPreviewUrl(null);
+            } else {
+                // Si la API retorna un mensaje de error específico, úsalo
+                setAlertTitle('Error en el Registro');
+                setAlertMessage(response.message || 'Hubo un problema al intentar registrarte. Por favor, inténtalo de nuevo.');
+                setAlertColor('red');
+                setShowAlert(true);
+            }
+
         } catch (error) {
             console.error("Error adding user:", error);
+            setAlertTitle('Error de Conexión');
+            setAlertMessage('Hubo un problema al intentar registrarte. Por favor, inténtalo más tarde.');
+            setAlertColor('red');
+            setShowAlert(true);
         }
     };
 
     return (
-       <div className="w-full gap-5 py-5">
+        <div className="w-full gap-5 py-5">
+            {/* Componente de alerta */}
+            {showAlert && (
+                <Alert
+                    color={alertColor}
+                    description={alertMessage}
+                    isVisible={showAlert}
+                    title={alertTitle}
+                    variant="faded"
+                    onClose={() => setShowAlert(false)}
+                    className="mb-4"
+                />
+            )}
+
             <Input
                 type="Email"
                 placeholder="Ingresa tu correo"
                 className="w-full px-4 py-2 bg-[#151320] text-white border
                  border-gray-700 rounded-xl focus:outline-none focus:ring-2
                   focus:ring-blue-500 focus:border-blue-500 transition mb-5"
-                  value={correo} 
-                  onChange={(e) => setCorreo(e.target.value)} 
+                value={correo}
+                onChange={(e) => setCorreo(e.target.value)}
             />
             <Input
                 type="Text"
@@ -137,8 +216,8 @@ export default function App() {
                 className="w-full px-4 py-2 bg-[#151320] text-white border
                  border-gray-700 rounded-xl focus:outline-none focus:ring-2
                   focus:ring-blue-500 focus:border-blue-500 transition mb-5"
-                value={nombre} 
-                onChange={(e) => setNombre(e.target.value)} 
+                value={nombre}
+                onChange={(e) => setNombre(e.target.value)}
             />
             <Input
                 type="Text"
@@ -146,21 +225,21 @@ export default function App() {
                 className="w-full px-4 py-2 bg-[#151320] text-white border
                  border-gray-700 rounded-xl focus:outline-none focus:ring-2
                   focus:ring-blue-500 focus:border-blue-500 transition mb-5"
-                value={apellido} // Bind to state
-                onChange={(e) => setApellido(e.target.value)} // Handle change
+                value={apellido}
+                onChange={(e) => setApellido(e.target.value)}
             />
-             <Input
+            <Input
                 type="Text"
                 placeholder="Ingresa tu nombre de usuario"
                 className="w-full px-4 py-2 bg-[#151320] text-white border
                  border-gray-700 rounded-xl focus:outline-none focus:ring-2
                   focus:ring-blue-500 focus:border-blue-500 transition mb-5"
-                value={nombre_usuario} 
-                onChange={(e) => setNombreUsuario(e.target.value)} 
+                value={nombre_usuario}
+                onChange={(e) => setNombreUsuario(e.target.value)}
             />
             <Input
-                className="w-full px-4 py-2 bg-[#151320] text-white border border-gray-700 
-                 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 
+                className="w-full px-4 py-2 bg-[#151320] text-white border border-gray-700
+                 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500
                  focus:border-blue-500 transition"
                 endContent={
                     <button
@@ -178,8 +257,8 @@ export default function App() {
                 }
                 placeholder="Ingrese su contraseña"
                 type={isVisible ? "text" : "password"}
-                value={contra} // Bind to state
-                onChange={(e) => setContra(e.target.value)} // Handle change
+                value={contra}
+                onChange={(e) => setContra(e.target.value)}
                 variant="bordered"
             />
             <div className="w-full mt-5 px-4 py-2 bg-[#151320] text-white border border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition grid items-center justify-center gap-2 p-2">
@@ -218,13 +297,14 @@ export default function App() {
                     </div>
                 )}
 
-                {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+                {fileError && <p className="text-red-500 text-sm mt-2">{fileError}</p>}
             </div>
             <Button
                 color="default"
                 className="bg-indigo-500 w-full rounded-2xl mt-10"
                 onPress={handleSubmit}
-                disabled={loading} // Deshabilita el boton para que no haya varios registros
+                isLoading={loading} // Usa isLoading para el estado de carga
+                disabled={loading} // Deshabilita el botón mientras carga
             >
                 {loading ? 'Registrando...' : 'Registrarse'}
             </Button>

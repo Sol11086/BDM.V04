@@ -28,39 +28,76 @@ import {
     ModalHeader,
     ModalBody,
     ModalFooter,
+    Alert,
     Badge,
 } from "@heroui/react";
 
 
 export default function App() {
-    const [isVisible, setIsVisible] = React.useState(false);
+    const [isVisible, setIsVisible] = React.useState(false); 
+    const [showAlert, setShowAlert] = useState(false); 
+    const [alertMessage, setAlertMessage] = useState(''); 
+    const [alertColor, setAlertColor] = useState('bg-red-500');
+    const [alertTitle, setAlertTitle] = useState('');
 
-    const toggleVisibility = () => setIsVisible(!isVisible);
+    const togglePasswordVisibility = () => setIsVisible(!isVisible); 
 
     const [backdrop, setBackdrop] = useState("blur");
     const [correo, setCorreo] = useState('');
     const [contra, setContra] = useState('');
-    const { setSelectedUser } = useUserContext ();
+    const { setSelectedUser } = useUserContext();
     const { verifyUser, getUser, loading } = useUsers();
 
     const { isOpen: isOpenLogin, onOpen: onOpenLogin, onOpenChange: onOpenChangeLogin } = useDisclosure();
+
     const handleLogin = async () => {
-        try {
-          const isValid = await verifyUser(correo, contra);
-          if (isValid) {
-            const userInfo = await getUser(correo);
-            console.log("Info usuario:", userInfo);
-            setSelectedUser(userInfo);
-          } else {
-            console.log("Credenciales no validas");
-          }
-        } catch (error) {
-          console.error("Error logging in:", error);
+        if (!correo || !contra) {
+            setAlertTitle('Error de Campos');
+            setAlertMessage('Por favor, ingresa tu correo y contraseña.');
+            setAlertColor('bg-yellow');
+            setShowAlert(true);
+            return;
         }
-      };
-      
+
+        try {
+            const isValid = await verifyUser(correo, contra);
+            if (isValid) {
+                const userInfo = await getUser(correo);
+                console.log("Info usuario:", userInfo);
+                setSelectedUser(userInfo);
+                setAlertTitle('¡Inicio de Sesión Exitoso!');
+                setAlertMessage('Has iniciado sesión correctamente.');
+                setAlertColor('bg-green-500');
+                setShowAlert(true);
+            } else {
+                setAlertTitle('Credenciales Incorrectas');
+                setAlertMessage('El correo o la contraseña son incorrectos. Inténtalo de nuevo.');
+                setAlertColor('bg-red-500');
+                setShowAlert(true);
+            }
+        } catch (error) {
+            console.error("Error logging in:", error);
+            setAlertTitle('Error de Conexión');
+            setAlertMessage('Hubo un problema al intentar iniciar sesión. Por favor, inténtalo más tarde.');
+            setAlertColor('bg-red-500');
+            setShowAlert(true);
+        }
+    };
+
     return (
         <div className="w-full gap-10 py-6">
+            {showAlert && (
+                <Alert
+                    color={alertColor}
+                    description={alertMessage}
+                    isVisible={showAlert}
+                    title={alertTitle}
+                    variant="faded"
+                    onClose={() => setShowAlert(false)}
+                    className="mb-4"
+                />
+            )}
+
             <Input
                 type="email"
                 placeholder="Enter your email"
@@ -68,18 +105,18 @@ export default function App() {
                  border-gray-700 rounded-xl focus:outline-none focus:ring-2
                   focus:ring-blue-500 focus:border-blue-500 transition mb-7"
                 value={correo}
-                onChange={(e)=>setCorreo(e.target.value)}
+                onChange={(e) => setCorreo(e.target.value)}
             />
             <Input
-                className="w-full px-4 py-2 bg-[#151320] text-white border border-gray-700 
-                 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 
+                className="w-full px-4 py-2 bg-[#151320] text-white border border-gray-700
+                 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500
                  focus:border-blue-500 transition"
                 endContent={
                     <button
                         aria-label="toggle password visibility"
                         className="flex items-center justify-center p-2 bg-transparent"
                         type="button"
-                        onClick={toggleVisibility}
+                        onClick={togglePasswordVisibility} // Usar la función renombrada
                     >
                         {isVisible ? (
                             <EyeSlashIcon className="w-6 h-6 text-gray-400" />
@@ -92,12 +129,12 @@ export default function App() {
                 type={isVisible ? "text" : "password"}
                 variant="bordered"
                 value={contra}
-                onChange={(e)=>setContra(e.target.value)}
+                onChange={(e) => setContra(e.target.value)}
             />
             <div className="w-full p-10 flex justify-center ">
                 <span>¿No tienes cuenta?</span>
                 <Link aria-current="page" className="hover:text-[#f609e2]" onPress={() => onOpenLogin()}>
-                    Registrate!
+                    Regístrate!
                 </Link>
                 <Modal
                     isOpen={isOpenLogin}
@@ -111,7 +148,7 @@ export default function App() {
                         {(onClose) => (
                             <>
                                 <ModalHeader
-                                    className="flex flex-col gap-1 bg-gradient-to-r 
+                                    className="flex flex-col gap-1 bg-gradient-to-r
                                     from-[#1A168C] to-[#f609e2] text-2xl text-white">
                                     Registrarse
                                 </ModalHeader>
@@ -123,10 +160,14 @@ export default function App() {
                     </ModalContent>
                 </Modal>
             </div>
-            <Button color="default" className="bg-indigo-500 w-full rounded-2xl"
-            isLoading={loading}
-            onPress={handleLogin}>
-            LogIn</Button>
+            <Button
+                color="default"
+                className="bg-indigo-500 w-full rounded-2xl"
+                isLoading={loading}
+                onPress={handleLogin}
+            >
+                Iniciar Sesión
+            </Button>
         </div>
     );
 }
